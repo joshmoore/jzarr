@@ -226,6 +226,10 @@ public class ZarrArray {
         return zarrArray;
     }
 
+    public Compressor getCompressor() {
+        return _compressor;
+    }
+
     public DataType getDataType() {
         return _dataType;
     }
