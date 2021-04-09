@@ -149,9 +149,11 @@ public class ZarrHeader {
             gen.writeObjectField("order", value.order);
             gen.writeObjectField("shape", value.getShape());
             gen.writeNumberField("zarr_format", value.zarr_format);
-            if (value.nested != null) {
-                gen.writeBooleanField("nested", value.nested);
+            String dimensionSeparator = ".";
+            if (Boolean.TRUE.equals(value.nested)) {
+                dimensionSeparator = "/";
             }
+            gen.writeStringField("dimension_separator", dimensionSeparator);
             gen.writeEndObject();
         }
     }
@@ -188,9 +190,22 @@ public class ZarrHeader {
             }
 
             Boolean nested = null;
-            JsonNode nestedNode = (JsonNode) root.path("nested");
-            if (!nestedNode.isMissingNode()) {
-                nested = nestedNode.asBoolean();
+            JsonNode dimensionSeparatorNode =
+                    (JsonNode) root.path("dimension_separator");
+            if (!dimensionSeparatorNode.isMissingNode()) {
+                String dimensionSeparator = dimensionSeparatorNode.asText();
+                switch (dimensionSeparator) {
+                    case ".":
+                        nested = false;
+                        break;
+                    case "/":
+                        nested = true;
+                        break;
+                    default:
+                        throw new IllegalArgumentException(
+                                "Unsupported dimension separator: "
+                                + dimensionSeparator);
+                }
             }
             return new ZarrHeader(shape, chunks, getRawDataType(dtype).toString(), getByteOrder(dtype), fill, compressor, nested);
         }

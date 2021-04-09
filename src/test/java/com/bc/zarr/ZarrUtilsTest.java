@@ -184,7 +184,8 @@ public class ZarrUtilsTest {
         pw.println("        10,");
         pw.println("        15");
         pw.println("    ],");
-        pw.println("    \"zarr_format\": 2");
+        pw.println("    \"zarr_format\": 2,");
+        pw.println("    \"dimension_separator\": \".\"");
         pw.println("}");
 
         return strip(sw.toString());
